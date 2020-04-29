@@ -1,0 +1,90 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>系统登录页</title>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios.js"></script>
+    <script src="~/Scripts/ElementUI/element-ui.js"></script>
+    <link href="~/Content/ElementUI/element-ui.css" rel="stylesheet" />
+
+</head>
+<body style="background-image:url(../../images/china.jpg);background-size:100% 100%" >    
+    <div id="app" style="width:500px;margin:240px auto;background-color:rgba(217, 208, 208,0.8)">
+        <el-row justify:center style="margin:0 40px">
+            <el-col v-bind:span="24">
+                <el-form ref="form">
+                    <el-form-item label="用户" style="margin-top:30px">
+                        <el-input v-model="userName" placeholder="输入用户名" autofocus="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码">
+                        <el-input v-model="pwd" show-password placeholder="输入密码" v-on:keyup.enter="login"></el-input>
+                    </el-form-item>
+                    <el-form-item style="margin-top:40px;margin-bottom:40px;">
+                        <el-button type="primary" style="width:100%" v-bind:loading="isLoading" v-bind:plain="true" v-on:click="login">{{loginMsg}}</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-col>
+        </el-row>
+        
+    </div>    
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                userName: '',
+                pwd: '',
+                isLoading: false,
+                loginMsg:'登录'
+            },
+            methods: {
+                showDialog: function (msg, messageType) {
+                    this.$message({
+                        message: msg,
+                        type: messageType
+                    });
+                },
+                login: function () {
+                    if (this.userName != '' && this.pwd != '') {
+                        this.isLoading = true;
+                        this.loginMsg = '登录中';
+                        axios({
+                            method:'post',
+                            url: 'Login/Login',
+                            data: {
+                                userName: this.userName,
+                                pwd: this.pwd                                
+                            },
+                            responseType:'json'
+                        }).then(function (result) {
+                            if (result.data.isSuccess) {
+                                 window.location.href = result.data.successMsg;
+                                //console.log('欢迎：' + this.userName);
+                            }
+                            else {
+                                vm.showDialog(result.data.errorMsg, 'warning');
+                               // alert(result.data.errorMsg);
+                                vm.isLoading = false;
+                                vm.loginMsg = "登录";
+                            }
+                            }).catch(function (errorMsg) {
+                              
+                                console.log(errorMsg);
+                            })                                            
+                    }
+                    else {                       
+                        vm.showDialog(result.data.errorMsg, 'warning');
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>用户管理</title>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios.js"></script>
+    <script src="~/Scripts/ElementUI/element-ui.js"></script>
+    <link href="~/Content/ElementUI/element-ui.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="userManage">
+        <el-card class="box-card">
+            <div slot="header">
+                <span>用户管理</span>
+            </div>
+            <div style="height:650px;width:100%">
+                <el-table v-bind:data="Table" width="100%">
+                    <el-table-column type="index" width="240"></el-table-column>
+                    <el-table-column prop="userName" label="用户名"></el-table-column>
+                    <el-table-column prop="userRole" label="用户角色"></el-table-column>
+                    <el-table-column fixed="right" label="操作" width="120">
+                        <template slot-scope="scope">
+                            <el-button type="text" size="small" v-on:click="DeleteUser(scope.row.userName,scope.$index)">删除</el-button>
+                            <el-button type="text" size="small" v-on:click="ShowEditDialog(scope.row.userName)">编辑</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div>
+                <el-pagination @*v-on:size-change="handleSizeChange"*@
+                               v-on:current-change="HandleCurrentChange"
+                               :current-page=page.currentPage
+                               :page-sizes="[10]"
+                               :page-size=page.pageSize
+                               layout="total, sizes, prev, pager, next, jumper"
+                               :total=total>
+                </el-pagination>
+            </div>
+        </el-card>
+        <el-card class="box-card">
+            <el-button typeof="primary" v-on:click="dialogFormVisible=true"><i class="el-icon-user"></i>新增用户</el-button>
+        </el-card>
+
+        <!--新增用户弹出框-->
+        <el-dialog title="新增用户" :visible.sync="dialogFormVisible">
+            <el-form :model="form">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
+                    <el-input v-model="form.userName" autocomplete="off" style="width:90%"></el-input>
+                </el-form-item>
+                <el-form-item label="用户密码" :label-width="formLabelWidth">
+                    <el-input v-model="form.userPwd" autocomplete="off" style="width:90%"></el-input>
+                </el-form-item>
+                <el-form-item label="用户角色" :label-width="formLabelWidth">
+                    <el-select v-model="form.userRole" placeholder="请选择用户角色">
+                        <el-option label="管理员" value="管理员"></el-option>
+                        <el-option label="操作员" value="操作员"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" v-on:click="AddUser(form.userName,form.userPwd,form.userRole)">确 定</el-button>
+            </div>
+        </el-dialog>
+
+
+        <!--编辑密码弹出框-->
+        <el-dialog title="编辑" :visible.sync="dialogFormVisibleEdit">
+            <el-form :model="editForm">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
+                    <el-input v-model="editForm.userName" autocomplete="off" style="width:90%" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="旧密码" :label-width="formLabelWidth">
+                    <el-input v-model="editForm.userPwdOld" show-password autocomplete="off" style="width:90%"></el-input>
+                </el-form-item>
+                <el-form-item label="新密码" :label-width="formLabelWidth">
+                    <el-input v-model="editForm.userPwdNew" show-password autocomplete="off" style="width:90%"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" v-on:click="EditUser(editForm.userName,editForm.userPwdOld,editForm.userPwdNew)">确 定</el-button>
+            </div>
+        </el-dialog>
+    </div>
+
+    
+    
+
+    <script>        
+        var vm = new Vue({
+            el: '#userManage',
+            data: {                  
+                userTable:[],
+                dialogFormVisible: false,
+                dialogFormVisibleEdit: false,
+                form: {
+                    userName: '',
+                    userPwd: '',
+                    userRole: '',
+                },
+                editForm: {
+                    userName: '',
+                    userPwdOld: '',
+                    userPwdNew: ''
+                },
+                page: {
+                    total: 0,
+                    currentPage: 1,
+                    pageSize: 10
+                },
+                formLabelWidth: '120px'
+            },
+            methods: {
+                ErrorMsg: function (msg) {
+                    this.$message.error(msg);
+                },
+                SuccessMsg: function (msg) {
+                    this.$message({
+                        message: msg,
+                        type: 'success'
+                    });
+                },
+                ShowEditDialog: function (userName) {
+                    vm.dialogFormVisibleEdit = true;
+                    vm.editForm.userName = userName;
+                },
+                EditUser: function (userName, userPwdOld, userPwdNew) {
+                    axios.post('/Main/EditUser', {
+                        userName: userName,
+                        userPwdOld: userPwdOld,
+                        userPwdNew: userPwdNew
+                    }).then(function (response) {
+                        if (response.data == "") {
+                            vm.SuccessMsg("操作成功");
+                            vm.dialogFormVisibleEdit = false;
+                        }
+                        else {
+                            vm.ErrorMsg(response.data);
+                        }
+                    })
+                },
+                DeleteUser: function (userName, index) {
+                    axios.post('/Main/DeleteUser', {
+                        userName: userName,
+                    }).then(function (response) {
+                        if (response.data == "操作成功") {
+                            vm.userTable.splice(index, 1);                            
+                        }
+
+                    })
+                },
+                AddUser: function (userName, userPwd, userRole) {
+                    if (userName == "" || userPwd == "" || userRole == "") {
+                        vm.ErrorMsg("账号或密码或角色不能为空");
+                        return;
+                    }
+                    axios.post('/Main/AddUser', {
+                        userName: userName,
+                        userPwd: userPwd,
+                        userRole: userRole
+                    }).then(function (response) {
+                        if (response.data == "操作成功") {
+                            vm.userTable.push({ userName: userName, userRole: userRole })
+                            vm.dialogFormVisible = false;                            
+                        }
+                        else {
+                            vm.ErrorMsg(response.data);
+                        }
+                    })
+                },
+                HandleCurrentChange: function (val) {
+                    this.page.currentPage =val;
+                }
+            },
+            created: function () {
+                axios.post('/Main/GetAllUsers', {
+
+                }).then(function (response) {
+                    vm.userTable = response.data;                    
+                })
+            },
+            computed: {
+                Table:function(){
+                    return this.userTable.slice((this.page.currentPage - 1) * this.page.pageSize, this.page.pageSize * this.page.currentPage);
+                },
+                total: function () {
+                    return this.userTable.length;
+                }
+                
+
+            },
+            mounted: function () {
+                
+            }
+        })
+    </script>
+
+
+</body>
+</html>

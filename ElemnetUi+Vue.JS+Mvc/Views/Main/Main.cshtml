@@ -1,0 +1,89 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>主界面</title>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios.js"></script>
+    <script src="~/Scripts/ElementUI/element-ui.js"></script>
+    <link href="~/Content/ElementUI/element-ui.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="main">
+        <el-container>
+            <el-header style="background-color:#545c64;color:#fff;margin-bottom:2px">
+                <span style="margin-top:20px">欢迎登入:@Session["currentUser"]</span>
+                <a v-on:click="changePage"><i style="margin-top:20px;margin-left:40px" class="el-icon-s-fold"></i></a>
+                <a style="position:absolute;right:30px;top:25px;color:#fff;text-decoration:none" href="/Login/LoginOut"><i class="el-icon-s-custom"></i>退出</a>
+            </el-header>            
+                <el-container style="height:800px;">
+                    <div style="background-color:#545c64">
+                        <el-menu border background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
+                            <el-submenu index="1">
+                                <template slot="title">
+                                    <i class="el-icon-location"></i>
+                                    <span>数据库操作</span>
+                                </template>
+                                <el-menu-item index="1-1">初始化数据库</el-menu-item>
+                                <el-menu-item index="1-2">系统基础数据</el-menu-item>
+                            </el-submenu>
+
+                            <el-submenu index="2">
+                                <template slot="title">
+                                    <i class="el-icon-location"></i>
+                                    <span>DAS</span>
+                                </template>
+                                <el-menu-item index="2-1">参数设置界面</el-menu-item>
+                                <el-menu-item index="2-2">DAS作业界面</el-menu-item>
+                            </el-submenu>
+
+                            <el-submenu index="3">
+                                <template slot="title">
+                                    <i class="el-icon-location"></i>
+                                    <span>DPS</span>
+                                </template>
+                                <el-menu-item index="3-1">参数设置界面</el-menu-item>
+                                <el-menu-item index="3-2">DPS作业界面</el-menu-item>
+                            </el-submenu>
+
+                            <el-menu-item index="4">
+                                <i class="el-icon-location"></i>
+                                <span>用户管理</span>
+                            </el-menu-item>
+                        </el-menu>
+                    </div>
+                    <div style="width:100%">
+                        <iframe src='~/Main/UserManage' style="width:100%;height:100%;border:none"></iframe>
+                    </div>
+                </el-container>            
+        </el-container>        
+    </div>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#main',
+            data: {
+                userName: 'admin',
+                page1: '~/Main/UserManage',
+                isCollapse: false
+            },
+            methods: {
+                changePage: function () {
+                    if (this.isCollapse) {
+                        this.isCollapse = false;
+                    }
+                    else {
+                        this.isCollapse = true;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
