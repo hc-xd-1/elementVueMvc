@@ -1,0 +1,107 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>QueryPickData</title>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios.js"></script>
+    <script src="~/Scripts/ElementUI/element-ui.js"></script>
+    <link href="~/Content/ElementUI/element-ui.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="queryPickData"> 
+        <el-card class="box-card">
+            <div slot="header">
+                <span>作业报表数据</span>
+            </div>
+            <el-container>
+                <el-header>
+                    <el-form :inline="true" :model="searchForm" v-bind:labelPosition="labelPosition" class="demo-form-inline">
+                        <el-form-item label="区域">
+                            <el-input v-model="searchForm.regionNo" placeholder="区域"></el-input>
+                        </el-form-item>
+                        <el-form-item label="物料编码">
+                            <el-input v-model="searchForm.itemCode" placeholder="物料编码"></el-input>
+                        </el-form-item>
+                        <el-form-item label="货位">
+                            <el-input v-model="searchForm.locator" placeholder="货位"></el-input>
+                        </el-form-item>
+                        <el-form-item label="开始时间">
+                            <el-date-picker v-model="dataValueStart"
+                                            type="date"
+                                            placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="结束时间">
+                            <el-date-picker v-model="dataValueEnd"
+                                            type="date"
+                                            placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="操作状态">
+                            <el-select v-model="currentValue" placeholder="请选择操作状态">
+                                <el-option v-for="item in selectOptions"
+                                           :key="item.value"
+                                           :label="item.label"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary">查询</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-header>
+
+                <el-main style="margin-top:50px;height:500px">                                                                                        
+                    <el-table v-bind:data="tablePickData">
+                        <el-table-column type="index" label="#"></el-table-column>
+                        <el-table-column label="单号" prop="orderNo"></el-table-column>
+                        <el-table-column label="零件号" prop="itemCode"></el-table-column>
+                        <el-table-column label="货位号" prop="locator"></el-table-column>
+                        <el-table-column label="需求数量" prop="requireQty"></el-table-column>
+                        <el-table-column label="状态" prop="status"></el-table-column>
+                        <el-table-column label="时间" prop="time"></el-table-column>
+                    </el-table>                                                 
+                </el-main>
+                <el-footer>
+                    <el-button type="primary">导入</el-button>
+                    <el-button type="primary">导出</el-button>
+                </el-footer>
+            </el-container>
+        </el-card>
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: '#queryPickData',
+            data: {
+                tablePickData: [],
+                labelPosition: 'right',
+                dataValueStart: '',
+                dataValueEnd:'',
+                searchForm: {
+
+                },
+                selectOptions: [{
+                    value: '已拣选',
+                    label:'已拣选'
+                }, {
+                        value: '待拣选',
+                        label:'待拣选'
+                    }],
+                currentValue:''
+            },
+            methods:{
+
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DPS</title>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios.js"></script>
+    <script src="~/Scripts/ElementUI/element-ui.js"></script>
+    <link href="~/Content/ElementUI/element-ui.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="dps">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <span>DPS</span>
+                <el-button style="float: right; padding: 8px 16px" v-bind:type="buttonType" v-on:click="closeMission">{{buttonText}}</el-button>
+            </div>
+            <el-container>
+                <div id="mainLeft" style="width:70%;height:600px;margin-right:20px;">
+                    <el-container>
+                        <el-header style="margin:0;padding:0;margin-bottom:20px;">                            
+                            <el-card>
+                                <el-button type="primary">确认</el-button>
+                            </el-card>                                
+                        </el-header>
+                        <div style="margin:0;padding:0;margin-top:20px">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <span>明细数据</span>
+                                </div>
+                                <el-table v-bind:data="tableOrderDetail">
+                                    <el-table-column type="index" label="#"></el-table-column>
+                                    <el-table-column prop="orderNo" label="单号"></el-table-column>
+                                    <el-table-column prop="itemCode" label="物料号"></el-table-column>
+                                    <el-table-column prop="locator" label="货位号"></el-table-column>
+                                </el-table>
+                            </el-card>                                                       
+                        </div>                                                
+                    </el-container>
+                </div>
+                <div id="mainRight" style="width:30%;height:600px;">
+                    <el-tabs v-model="activeName" v-on:tab-click="changeTab">
+                        <el-tab-pane label="流水日志" name="first">
+                        <textarea style="width:100%;height:100%">
+
+                        </textarea>
+                        </el-tab-pane>
+                        <el-tab-pane label="看板任务" name="second">
+                            <el-table v-bind:data="tableLookData">
+                                <el-table-column type="index" label="#"></el-table-column>
+                                <el-table-column prop="orderNo" label="单号"></el-table-column>
+                                <el-table-column prop="orderStatus" label="状态"></el-table-column>
+                                <el-table-column prop="timer" label="时间"></el-table-column>
+                            </el-table>
+                        </el-tab-pane>                        
+                    </el-tabs>
+                </div>
+            </el-container>
+        </el-card>
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: '#dps',
+            data: {
+                activeName: 'first',
+                tableOrderDetail: [],
+                tableLookData:[],
+                orderNo: '',
+                buttonType: 'primary',
+                buttonText: '关闭任务'              
+            },
+            methods: {
+                changeTab: function (tab) {                    
+                    vm.activeName = tab.name;
+                },
+                closeMission: function () {
+                    if (vm.buttonText == "关闭任务") {
+                        vm.buttonType = 'warning';
+                        vm.buttonText = '开启任务';
+                    }
+                    else {
+                        vm.buttonType = 'primary';
+                        vm.buttonText = '关闭任务';
+                    }
+                    
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

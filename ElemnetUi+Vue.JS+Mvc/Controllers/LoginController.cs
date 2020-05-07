@@ -37,14 +37,12 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
             try
             {
                 string userPwd = EncryUserPwd.EncryPwd(pwd);
-                MvcApplication.bllMethod.CheckUserAndPwd(userName, userPwd, out errorMsg);
-                errorMsg = "";
+                MvcApplication.bllMethod.CheckUserAndPwd(userName, userPwd, out errorMsg);                
                 if (errorMsg == "")
                 {
                     resultBaseInfo.isSuccess = true;
                     resultBaseInfo.successMsg = "/Main/Main";
-                    Session["currentUser"] = userName;
-                    //resultBaseInfo.successMsg = string.Format("欢迎登录：[{0}]",userName);
+                    Session["currentUser"] = userName;                    
                 }
                 else
                 {

@@ -27,7 +27,7 @@ namespace ElemnetUi_Vue.JS_Mvc.BLL
                 }
                 else
                 {
-                    SqlHelper.CallProcLogin(userName, pwd, out errorMsg);
+                    SqlModelHelp.CheckUserAndPwd(userName, pwd, out errorMsg);                   
                 }
             }
             catch(Exception ex)
@@ -47,22 +47,7 @@ namespace ElemnetUi_Vue.JS_Mvc.BLL
             userInfoModels = new List<Models.UserInfoModel>();               
             try
             {
-                string str = string.Format("select u.userId,u.userName,u.userPwd,u.userRole from t_sysUser u");
-                DataSet dataSet=SqlHelper.ExcuteSql(str, out errorMsg);
-                if (errorMsg == "" && dataSet!=null &&dataSet.Tables.Count>0 && dataSet.Tables[0].Rows.Count>0)
-                {
-                    foreach (DataRow dataRow in dataSet.Tables[0].Rows)
-                    {
-                        Models.UserInfoModel userInfoModel = new Models.UserInfoModel()
-                        {
-                            userId = dataRow["userId"].ToString(),
-                            userName = dataRow["userName"].ToString(),
-                            userPwd = dataRow["userPwd"].ToString(),
-                            userRole = dataRow["userRole"].ToString()
-                        };
-                        userInfoModels.Add(userInfoModel);
-                    }
-                }
+                userInfoModels=SqlModelHelp.GetAllUsers(out errorMsg);                
             }
             catch(Exception ex)
             {
@@ -80,45 +65,15 @@ namespace ElemnetUi_Vue.JS_Mvc.BLL
             errorMsg = string.Empty;
             try
             {
-                string str = string.Format("delete from t_sysUser where userName='{0}'", userName);
-                SqlHelper.ExcuteSql(str,out errorMsg);
+                SqlModelHelp.DeleteUser(userName, out errorMsg);
                 if (errorMsg == "")
                 {
                     errorMsg = "操作成功";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 errorMsg = ex.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 检查用户是否已存在
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="errorMsg"></param>
-        /// <returns></returns>
-        public bool CheckUserExist(string userName,out string errorMsg)
-        {
-            errorMsg = string.Empty;
-            try
-            {
-                string str = string.Format("select userName from t_sysUser where userName='{0}'",userName);
-                DataSet dataSet = SqlHelper.ExcuteSql(str,out errorMsg);
-                if (dataSet != null && dataSet.Tables.Count > 0 && dataSet.Tables[0].Rows.Count > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch(Exception ex)
-            {
-                errorMsg = ex.ToString();
-                return false;
             }
         }
 
@@ -133,22 +88,9 @@ namespace ElemnetUi_Vue.JS_Mvc.BLL
         {
             errorMsg = string.Empty;
             try
-            {
-                if (CheckUserExist(userName, out errorMsg))
-                {
-                    errorMsg = "账号已存在";
-                    return;
-                }
-                else
-                {
-                    if (errorMsg.Length > 0)
-                    {
-                        return;
-                    }
-                }
+            {                
                 string pwd = EncryUserPwd.EncryPwd(userPwd);
-                string str = string.Format("insert into t_sysUser(userName,userPwd,userRole) values('{0}','{1}','{2}')", userName, pwd, userRole);
-                SqlHelper.ExcuteSql(str, out errorMsg);
+                SqlModelHelp.AddUser(userName, pwd, userRole, out errorMsg);                
                 if (errorMsg == "")
                 {
                     errorMsg = "操作成功";
@@ -173,7 +115,7 @@ namespace ElemnetUi_Vue.JS_Mvc.BLL
             {
                 userPwdOld = EncryUserPwd.EncryPwd(userPwdOld);
                 userPwdNew = EncryUserPwd.EncryPwd(userPwdNew);
-                SqlHelper.CallProcEditUserPwd(userName, userPwdOld, userPwdNew, out errorMsg);
+                SqlModelHelp.EditUserPwd(userName, userPwdOld, userPwdNew, out errorMsg);                
             }
             catch(Exception ex)
             {

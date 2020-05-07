@@ -24,7 +24,7 @@
                         <el-input v-model="userName" placeholder="输入用户名" autofocus="true"></el-input>
                     </el-form-item>
                     <el-form-item label="密码">
-                        <el-input v-model="pwd" show-password placeholder="输入密码" v-on:keyup.enter="login"></el-input>
+                        <el-input v-model="pwd" show-password placeholder="输入密码"></el-input>
                     </el-form-item>
                     <el-form-item style="margin-top:40px;margin-bottom:40px;">
                         <el-button type="primary" style="width:100%" v-bind:loading="isLoading" v-bind:plain="true" v-on:click="login">{{loginMsg}}</el-button>
@@ -65,12 +65,10 @@
                             responseType:'json'
                         }).then(function (result) {
                             if (result.data.isSuccess) {
-                                 window.location.href = result.data.successMsg;
-                                //console.log('欢迎：' + this.userName);
+                                 window.location.href = result.data.successMsg;                                
                             }
                             else {
-                                vm.showDialog(result.data.errorMsg, 'warning');
-                               // alert(result.data.errorMsg);
+                                vm.showDialog(result.data.errorMsg, 'warning');                               
                                 vm.isLoading = false;
                                 vm.loginMsg = "登录";
                             }
@@ -80,8 +78,16 @@
                             })                                            
                     }
                     else {                       
-                        vm.showDialog(result.data.errorMsg, 'warning');
+                        vm.showDialog('账号或密码不能为空', 'warning');
                     }
+                }
+            },
+            created: function () {
+                document.onkeydown = function () {
+                    var key = window.event.keyCode;
+                    if (key == "13") {
+                        vm.login();
+                    }                    
                 }
             }
         })

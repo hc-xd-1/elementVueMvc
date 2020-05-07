@@ -11,9 +11,10 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
         // GET: Main
         public ActionResult Index()
         {
+
             return View();
         }
-
+        
 
         /// <summary>
         /// 管理系统主界面
@@ -21,6 +22,7 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
         /// <returns></returns>
         public ActionResult Main()
         {
+            BLL.RedisHelper.InitAndGetAllKeys();
             return View();
         }
 
@@ -46,15 +48,23 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
             string errorMsg = string.Empty;
             try
             {
-                MvcApplication.bllMethod.GetAllUsers(out userInfoModels,out errorMsg);
+                BLL.RedisHelper.GetAllUserKeys(out userInfoModels);
+             //   MvcApplication.bllMethod.GetAllUsers(out userInfoModels,out errorMsg);
             }
             catch(Exception ex)
             {
-
+                errorMsg = ex.ToString();
             }
             return Json(userInfoModels);
         }
 
+        /// <summary>
+        /// 编辑用户
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="userPwdOld"></param>
+        /// <param name="userPwdNew"></param>
+        /// <returns></returns>
         public ActionResult EditUser(string userName,string userPwdOld,string userPwdNew)
         {
             string errorMsg = string.Empty;
@@ -69,6 +79,11 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
             return Json(errorMsg);
         }
 
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public ActionResult DeleteUser(string userName)
         {
             string errorMsg = string.Empty;
@@ -83,6 +98,13 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
             return Json(errorMsg);
         }
 
+        /// <summary>
+        /// 新增用户
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="userPwd"></param>
+        /// <param name="userRole"></param>
+        /// <returns></returns>
         public ActionResult AddUser(string userName,string userPwd,string userRole)
         {
             string errorMsg = string.Empty;
@@ -95,6 +117,35 @@ namespace ElemnetUi_Vue.JS_Mvc.Controllers
 
             }
             return Json(errorMsg);
+        }
+
+        /// <summary>
+        /// dps作业界面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DPS()
+        {
+            return View();
+        }
+
+
+
+        /// <summary>
+        /// DAS作业界面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DAS()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 作业报表数据查询界面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult QueryPickData()
+        {
+            return View();
         }
     }
 }

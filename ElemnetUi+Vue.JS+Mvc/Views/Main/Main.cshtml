@@ -40,7 +40,7 @@
                                     <span>DAS</span>
                                 </template>
                                 <el-menu-item index="2-1">参数设置界面</el-menu-item>
-                                <el-menu-item index="2-2">DAS作业界面</el-menu-item>
+                                <el-menu-item index="2-2" v-on:click="LoadDASView">DAS作业界面</el-menu-item>
                             </el-submenu>
 
                             <el-submenu index="3">
@@ -48,18 +48,18 @@
                                     <i class="el-icon-location"></i>
                                     <span>DPS</span>
                                 </template>
-                                <el-menu-item index="3-1">参数设置界面</el-menu-item>
-                                <el-menu-item index="3-2">DPS作业界面</el-menu-item>
+                                <el-menu-item index="3-1" v-on:click="LoadPickDataView">作业报表查询</el-menu-item>
+                                <el-menu-item index="3-2" v-on:click="LoadDPSView">DPS作业界面</el-menu-item>
                             </el-submenu>
 
-                            <el-menu-item index="4">
+                            <el-menu-item index="4" v-on:click="LoadUserManageView">
                                 <i class="el-icon-location"></i>
                                 <span>用户管理</span>
                             </el-menu-item>
                         </el-menu>
                     </div>
                     <div style="width:100%">
-                        <iframe src='~/Main/UserManage' style="width:100%;height:100%;border:none"></iframe>
+                        <iframe v-bind:src="page1" style="width:100%;height:100%;border:none"></iframe>
                     </div>
                 </el-container>            
         </el-container>        
@@ -70,7 +70,7 @@
             el: '#main',
             data: {
                 userName: 'admin',
-                page1: '~/Main/UserManage',
+                page1: '/Main/DPS',
                 isCollapse: false
             },
             methods: {
@@ -81,6 +81,18 @@
                     else {
                         this.isCollapse = true;
                     }
+                },
+                LoadDPSView: function () {
+                    vm.page1 = '/Main/DPS';
+                },
+                LoadDASView: function () {
+                    vm.page1 = '/Main/DAS';
+                },
+                LoadUserManageView: function () {
+                    vm.page1 = '/Main/UserManage';
+                },
+                LoadPickDataView: function () {
+                    vm.page1='/Main/QueryPickData'
                 }
             }
         })
